@@ -1,0 +1,29 @@
+name: build
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    name: Ruby ${{ matrix.ruby_version }} / Rails ${{ matrix.rails_version }}
+    strategy:
+      matrix:
+        ruby_version: [ruby-head, '3.3', '3.2', '3.1']
+        rails_version: [edge, '7.1', '7.0', '6.1', '6.0']
+
+    env:
+      RAILS_VERSION: ${{ matrix.rails_version }}
+
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby_version }}
+          bundler-cache: true
+        continue-on-error: ${{ matrix.allow_failures == 'true' }}
+
+      - run: bundle exec rake
+        continue-on-error: ${{ matrix.allow_failures == 'true' }}
