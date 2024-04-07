@@ -13,7 +13,7 @@ module ActiveLinkTo
     name = block_given? ? capture(&block) : args.shift
     options = args.shift || {}
     html_options = args.shift || {}
-    
+
     url = url_for(options)
 
     active_options  = { }
