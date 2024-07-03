@@ -1,27 +1,25 @@
 name: build
 
 on:
-  pull_request:
+  push:
 
 jobs:
   build:
     name: Ruby ${{ matrix.ruby_version }} / Rails ${{ matrix.rails_version }}
     strategy:
       matrix:
-        ruby_version: [ruby-head, '3.3', '3.2', '3.1']
-        rails_version: [edge, '7.1', '7.0', '6.1', '6.0']
-        exclude:
-          - ruby_version: ruby-head
+        include:
+          - ruby_version: '3.3'
+            rails_version: '7.1'
+          - ruby_version: '3.2'
             rails_version: '7.0'
-          - ruby_version: ruby-head
+          - ruby_version: '3.2'
             rails_version: '6.1'
-          - ruby_version: ruby-head
-            rails_version: '6.0'
 
     env:
       RAILS_VERSION: ${{ matrix.rails_version }}
 
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -30,7 +28,5 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby_version }}
           bundler-cache: true
-        continue-on-error: ${{ matrix.allow_failures == 'true' }}
 
       - run: bundle exec rake
-        continue-on-error: ${{ matrix.allow_failures == 'true' }}
